@@ -1,0 +1,272 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      Role       @default(OFFICE_MANAGER)
+  officeId  String?
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  lastLogin DateTime?
+  auditLogs AuditLog[]
+  sessions  Session[]
+  office    Office?    @relation(fields: [officeId], references: [id])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Office {
+  id        String          @id @default(cuid())
+  name      String
+  city      String
+  address   String?
+  phone     String?
+  email     String?
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  expenses  Expense[]
+  shipments Shipment[]
+  manifests TrainManifest[]
+  users     User[]
+}
+
+model Customer {
+  id               String        @id @default(cuid())
+  name             String
+  phone            String?
+  email            String?
+  address          String?
+  city             String?
+  gstNumber        String?
+  defaultRateRoad  Float         @default(0)
+  defaultRateTrain Float         @default(0)
+  defaultRateAir   Float         @default(0)
+  creditLimit      Float         @default(0)
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  ledgerEntries    LedgerEntry[]
+  payments         Payment[]
+  shipments        Shipment[]
+}
+
+model Shipment {
+  id                String           @id @default(cuid())
+  trackingNumber    String           @unique
+  date              DateTime
+  customerId        String
+  officeId          String
+  mode              ShipmentMode
+  packets           Int              @default(1)
+  weight            Float
+  rate              Float
+  amount            Float
+  status            ShipmentStatus   @default(BOOKED)
+  fromCity          String
+  toCity            String
+  description       String?
+  remarks           String?
+  deliveryPartnerId String?
+  manifestId        String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  ledgerEntries     LedgerEntry[]
+  payments          Payment[]
+  customer          Customer         @relation(fields: [customerId], references: [id])
+  deliveryPartner   DeliveryPartner? @relation(fields: [deliveryPartnerId], references: [id])
+  manifest          TrainManifest?   @relation(fields: [manifestId], references: [id])
+  office            Office           @relation(fields: [officeId], references: [id])
+  trackingEvents    TrackingEvent[]
+
+  @@index([customerId])
+  @@index([date])
+  @@index([officeId])
+  @@index([status])
+}
+
+model TrainManifest {
+  id           String     @id @default(cuid())
+  date         DateTime
+  trainNumber  String?
+  fromCity     String
+  toCity       String
+  officeId     String
+  totalPackets Int        @default(0)
+  totalWeight  Float      @default(0)
+  totalAmount  Float      @default(0)
+  remarks      String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  shipments    Shipment[]
+  office       Office     @relation(fields: [officeId], references: [id])
+
+  @@index([date])
+  @@index([officeId])
+}
+
+model TrackingEvent {
+  id          String         @id @default(cuid())
+  shipmentId  String
+  status      ShipmentStatus
+  location    String?
+  description String?
+  timestamp   DateTime       @default(now())
+  createdBy   String?
+  shipment    Shipment       @relation(fields: [shipmentId], references: [id])
+
+  @@index([shipmentId])
+}
+
+model DeliveryPartner {
+  id        String     @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  vehicleNo String?
+  area      String?
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  shipments Shipment[]
+}
+
+model Payment {
+  id          String       @id @default(cuid())
+  date        DateTime
+  customerId  String
+  shipmentId  String?
+  amount      Float
+  mode        PaymentMode
+  referenceNo String?
+  remarks     String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  ledgerEntry LedgerEntry?
+  customer    Customer     @relation(fields: [customerId], references: [id])
+  shipment    Shipment?    @relation(fields: [shipmentId], references: [id])
+
+  @@index([customerId])
+  @@index([date])
+  @@index([shipmentId])
+}
+
+model LedgerEntry {
+  id              String     @id @default(cuid())
+  date            DateTime
+  customerId      String
+  shipmentId      String?
+  type            LedgerType
+  pieces          Int?
+  weight          Float?
+  rate            Float?
+  amount          Float
+  paymentReceived Float      @default(0)
+  runningBalance  Float
+  remarks         String?
+  createdAt       DateTime   @default(now())
+  paymentId       String?    @unique
+  customer        Customer   @relation(fields: [customerId], references: [id])
+  payment         Payment?   @relation(fields: [paymentId], references: [id])
+  shipment        Shipment?  @relation(fields: [shipmentId], references: [id])
+
+  @@index([customerId])
+  @@index([date])
+  @@index([shipmentId])
+}
+
+model Expense {
+  id          String          @id @default(cuid())
+  date        DateTime
+  category    ExpenseCategory
+  amount      Float
+  description String?
+  officeId    String?
+  paidTo      String?
+  billNumber  String?
+  remarks     String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  office      Office?         @relation(fields: [officeId], references: [id])
+
+  @@index([category])
+  @@index([date])
+  @@index([officeId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String?
+  oldValue  Json?
+  newValue  Json?
+  ipAddress String?
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+enum Role {
+  SUPER_ADMIN
+  OFFICE_MANAGER
+}
+
+enum ShipmentMode {
+  ROAD
+  TRAIN
+  AIR
+}
+
+enum ShipmentStatus {
+  BOOKED
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentMode {
+  CASH
+  BANK_TRANSFER
+  UPI
+  CHEQUE
+  CREDIT
+}
+
+enum LedgerType {
+  SHIPMENT
+  PAYMENT
+  ADJUSTMENT
+}
+
+enum ExpenseCategory {
+  FUEL
+  SALARY
+  RENT
+  TRAIN_CHARGES
+  AIR_CHARGES
+  LOADING
+  UNLOADING
+  MISC
+}
