@@ -465,7 +465,7 @@ export default async function LandingPage() {
             <div>
               <p className="text-sm font-semibold uppercase tracking-wider text-cream">Contact</p>
               <ul className="mt-3 space-y-2 text-sm text-white/70 md:mt-4 md:space-y-2.5">
-                <li>9839068473</li>
+                <li>98375290756</li>
                 <li>ops@blueroutelogistics.com</li>
                 <li>Kanpur Office</li>
               </ul>

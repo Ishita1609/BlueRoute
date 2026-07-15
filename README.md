@@ -27,7 +27,7 @@ A super admin can see across the entire business, while an office manager works 
 
 ## 🚀 Live Demo
 
-🌐 **[Live URL to be added after deployment]**
+🌐 [https://blue-route-plum.vercel.app/](https://blue-route-plum.vercel.app/)
 
 ### Demo Accounts
 
