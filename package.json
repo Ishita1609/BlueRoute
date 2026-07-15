@@ -2,6 +2,29 @@
   "name": "blueroute-logistics",
   "version": "1.0.0",
   "private": true,
+  "description": "Full-stack enterprise logistics management platform for multi-office freight operations — shipment tracking, customer ledgers, payments, expenses, and analytics.",
+  "keywords": [
+    "nextjs",
+    "typescript",
+    "prisma",
+    "postgresql",
+    "erp",
+    "logistics",
+    "dashboard",
+    "tailwindcss",
+    "recharts",
+    "enterprise-software"
+  ],
+  "author": "Ishita Singh <ishitasingh1616@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/Ishita1609/BlueRoute#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ishita1609/BlueRoute.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ishita1609/BlueRoute/issues"
+  },
   "scripts": {
     "dev": "next dev",
     "postinstall": "prisma generate",

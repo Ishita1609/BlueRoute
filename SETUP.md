@@ -6,10 +6,11 @@
 
 ## 1. Configure Database
 
-Edit the `.env` file in C:\Cargo:
+Edit the `.env` file in the project root:
 
 ```
 DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/blueroute"
+DIRECT_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/blueroute"
 NEXTAUTH_SECRET="any-long-random-string"
 NEXTAUTH_URL="http://localhost:3000"
 ```

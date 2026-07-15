@@ -151,11 +151,12 @@ export default async function LandingPage() {
       {/* ─── STATS — floating panel, overlapping the hero's bottom edge ─── */}
       <section className="relative px-4 pb-8 md:pb-14">
         <div className="relative z-10 mx-auto -mt-10 max-w-5xl rounded-[2rem] border border-ink-100 bg-white px-4 py-5 shadow-2xl shadow-navy-900/10 sm:-mt-16 sm:px-5 sm:py-6 md:px-12 md:py-9">
-          <div className="grid grid-cols-3 gap-2 text-center sm:gap-5 md:gap-8">
+          <div className="grid grid-cols-2 gap-2 text-center sm:gap-5 md:grid-cols-4 md:gap-8">
             {[
               { label: "Cities", value: "75+" },
-              { label: "Ton/Month", value: "500+" },
+              { label: "Shipments/Month", value: "5000+" },
               { label: "Years of Experience", value: "20+" },
+              { label: "Clients", value: "500+" },
             ].map((s) => (
               <div key={s.label}>
                 <div className="text-xl font-bold tabular-nums text-navy-900 sm:text-2xl md:text-3xl">{s.value}</div>
